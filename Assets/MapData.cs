@@ -9,15 +9,15 @@ public class MapData : MonoBehaviour
     {
         MakeMyMap();
     }
-    int[,] MakeMyMap()
+    public int[,] MakeMyMap()
     {
-        int[,] map = new int[height, width];
-        for (int i = 0; i < width; i++)
+        int[,] map = new int[width, height];
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j < width; j++)
             {
                 map[j,i] = 0;
-                Debug.Log(map[i, j]);
+                Debug.Log(map[j,i]);
             }
         }
         map[1, 0] = 1;
