@@ -11,6 +11,7 @@ public class Grid : MonoBehaviour
     public LayerMask unWalkableMask;
     public float nodeDiameter;
     int gridSizeX, gridSizeY;
+    public Transform player;
 
     private void Start()
     {
@@ -39,7 +40,7 @@ public class Grid : MonoBehaviour
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
         float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
+        float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
 
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
@@ -49,16 +50,41 @@ public class Grid : MonoBehaviour
 
         return grid[x, y];
     }
-
+    public List<Node> GetNeighbours(Node node)
+    {
+        List<Node> neighbourNode = new List<Node>();
+        for (int x = -1; x<=1; x++)
+        {
+            for (int y = -1; y <=1; y++)
+            {
+                if (x == 0 && y == 0)
+                {
+                    continue;
+                }
+                int checkX = node.gridX + x;
+                int checkY = node.gridY + y;
+                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0&&checkY<gridSizeY)
+                {
+                    neighbourNode.Add(grid[checkX, checkY]);
+                }
+            }
+        }
+        return neighbourNode;
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,0.5f,gridWorldSize.y));
 
         if (grid != null)
         {
+            Node playerNode = NodeFromWorldPoint(player.position);
             foreach  (Node n  in grid)
             {
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                if (playerNode == n)
+                {
+                    Gizmos.color = Color.green;
+                }
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
             }
         }
